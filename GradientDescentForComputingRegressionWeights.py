@@ -37,17 +37,25 @@ def getOptimalWeightsUsingGradientDescent (x, y, mCurrent, bCurrent,
 
         #The cost funtion, Mean Square Error function
         cost = (1/n) * sum([val**2 for val in (y-yPredicted)])        
-                
-        mDerivativeOfCostFunction = -(2/n) * sum(x*(y-yPredicted))
-        bDerivativeOfCostFunction = -(2/n) * sum(y-yPredicted)
         
+        #Calculate the patial derivative w.r.t 'm' to the cost function
+        mDerivativeOfCostFunction = -(2/n) * sum(x*(y-yPredicted))
+        #Calculate the patial derivative w.r.t 'm' to the cost function        
+        bDerivativeOfCostFunction = -(2/n) * sum(y-yPredicted)
+        #Computing the current 'm' value using the learning rate and 
+        #the partial derivative
         mCurrent = mCurrent - learningRate * mDerivativeOfCostFunction
+        #Computing the current 'b' value using the learning rate and 
+        #the partial derivative
         bCurrent = bCurrent - learningRate * bDerivativeOfCostFunction
-        print ("i {}, m {}, b {}, cost {}".format(i, mCurrent, bCurrent, cost))
+        print ("i {}, m {}, b {}, mDerivativeOfCostFunction {}, bDerivativeOfCostFunction {}, cost {}".format(i, mCurrent, bCurrent, mDerivativeOfCostFunction, bDerivativeOfCostFunction, cost))
         
         plt.plot(x, yPredicted, color='green', alpha=0.1)
 
         if i >= 1:
+            #Checking if the cost computed in the previous step and the 
+            #current step are close enough so that we can descide whether to 
+            #break from the iterations
             if math.isclose(previousCost, cost, rel_tol=1e-09, abs_tol=0.0):
                 plt.plot(x, yPredicted, color='red')
                 return;
@@ -56,19 +64,27 @@ def getOptimalWeightsUsingGradientDescent (x, y, mCurrent, bCurrent,
 - RM       average number of rooms per dwelling
 - MEDV     Median value of owner-occupied homes in $1000's
 """
+#Load the boston dataset
 from sklearn.datasets import load_boston
 boston_dataset = load_boston()
 
-boston = pd.DataFrame(boston_dataset.data, columns=boston_dataset.feature_names)
-boston.head()
+#Preview the dataSet and look at the statistics of the dataSet
+#Check for any missing values 
+#so that we will know whether to handle the missing values or not
+print("*** Preview the dataSet and look at the statistics of the dataSet ***")
+print (boston_dataset.DESCR)
+
+boston = pd.DataFrame(boston_dataset.data, 
+                      columns=boston_dataset.feature_names)
 boston['MEDV'] = boston_dataset.target
 
+#This is one of the feature from the boston dataset
 numberOfRoomsArray = np.array(boston['RM'])
+#This is the label in the boston dataset
 priceOfHouseArray = np.array(boston['MEDV'])
 plt.scatter(numberOfRoomsArray, priceOfHouseArray, marker='o')
 plt.xlabel('RM')
 plt.ylabel('MEDV')
-plt.show();
 
 #Initial values of m and b in the hypothesis function y = mx + b
 mCurrent = bCurrent = 0
@@ -79,12 +95,13 @@ numberOfIterations = 15000
 #Learning rate
 learningRate = 0.02
 
-getOptimalWeightsUsingGradientDescent (numberOfRoomsArray, priceOfHouseArray, mCurrent, bCurrent, 
+#Invoke the getOptimalWeightsUsingGradientDescent function to perform the
+#Gradient descent algorithm
+getOptimalWeightsUsingGradientDescent (numberOfRoomsArray, priceOfHouseArray, 
+                                       mCurrent, bCurrent, 
                                        numberOfIterations, learningRate)
 
-print ("****************************************************************")
 print ("************************ Linear Regression *********************")
-print ("****************************************************************")
 numberOfRooms = pd.DataFrame(np.c_[boston['RM']], columns = ['RM'])
 priceOfHouse = boston['MEDV']
 
@@ -100,7 +117,8 @@ print ('Coefficients: ', regressor.coef_)
 
 #Calculating the Mean of the squared error
 from sklearn.metrics import mean_squared_error
-print ("Mean squared error: ", mean_squared_error(priceOfHouse, predictedPriceOfHouse))
+print ("Mean squared error: ", mean_squared_error(priceOfHouse, 
+                                                  predictedPriceOfHouse))
 
 #Finding out the accuracy of the model
 from sklearn.metrics import r2_score
