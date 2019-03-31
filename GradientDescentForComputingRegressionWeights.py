@@ -38,15 +38,18 @@ def getOptimalWeightsUsingGradientDescent (x, y, mCurrent, bCurrent,
         #The cost funtion, Mean Square Error function
         cost = (1/n) * sum([val**2 for val in (y-yPredicted)])        
         
+        #Note: Partial derivative gives us the slop or direction
         #Calculate the patial derivative w.r.t 'm' to the cost function
         mDerivativeOfCostFunction = -(2/n) * sum(x*(y-yPredicted))
         #Calculate the patial derivative w.r.t 'm' to the cost function        
         bDerivativeOfCostFunction = -(2/n) * sum(y-yPredicted)
         #Computing the current 'm' value using the learning rate and 
-        #the partial derivative
+        #the partial derivative. We subtract because the derivatives point 
+        #in direction of steepest ascent
         mCurrent = mCurrent - learningRate * mDerivativeOfCostFunction
         #Computing the current 'b' value using the learning rate and 
-        #the partial derivative
+        #the partial derivative. We subtract because the derivatives point 
+        #in direction of steepest ascent
         bCurrent = bCurrent - learningRate * bDerivativeOfCostFunction
         print ("i {}, m {}, b {}, mDerivativeOfCostFunction {}, bDerivativeOfCostFunction {}, cost {}".format(i, mCurrent, bCurrent, mDerivativeOfCostFunction, bDerivativeOfCostFunction, cost))
         
@@ -77,6 +80,7 @@ print (boston_dataset.DESCR)
 boston = pd.DataFrame(boston_dataset.data, 
                       columns=boston_dataset.feature_names)
 boston['MEDV'] = boston_dataset.target
+print (boston)
 
 #This is one of the feature from the boston dataset
 numberOfRoomsArray = np.array(boston['RM'])
